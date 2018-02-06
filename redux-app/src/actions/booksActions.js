@@ -1,3 +1,9 @@
+export const getBooks = () => {
+    return {
+        type: 'GET_BOOKS'
+    }
+}
+
 export const postBook = (book) => {
     return {
         type: 'POST_BOOK',

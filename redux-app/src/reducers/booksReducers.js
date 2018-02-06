@@ -1,8 +1,24 @@
 // 3 - Define reducers
 // create reducer by passing two arguments, state and action, and returning the state
-export const booksReducers = (state={books: []}, action) => {
+export const booksReducers = (state={
+    books: 
+        [{
+            id: 1,
+            title: 'this is the book title',
+            description: 'this is the description',
+            price: 33.33
+        },
+        {
+            id: 2,
+            title: 'This is second book',
+            description: 'Second description',
+            price: 25.00
+        }]
+}, action) => {
     // use of reducers is to evaluate what to do with received actions
     switch(action.type) {
+        case "GET_BOOKS":
+            return {...state, books: [...state.books]}
         case "POST_BOOK":
     // use concat to add item to state
     // let books = state.books.concat(action.payload)
