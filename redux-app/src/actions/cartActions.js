@@ -14,10 +14,9 @@ export const deleteCartItem = (cart) => {
     }
 }
 
-export const updateCart = (_id, cart) => {
+export const updateCart = (_id) => {
     return {
         type: 'UPDATE_CART',
-        _id,
-        unit
+        _id
     }
 }

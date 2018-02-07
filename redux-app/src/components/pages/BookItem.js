@@ -2,11 +2,11 @@ import React from 'react';
 import { Row, Col, Well, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addToCart } from '../../actions/cartActions';
+import { addToCart, updateCart } from '../../actions/cartActions';
 
 
 
-class BookItem extends React.Component{
+class BookItem extends React.Component {
     handleCart() {
         const book = [...this.props.cart, {
             _id: this.props._id,
@@ -16,33 +16,34 @@ class BookItem extends React.Component{
             quantity: 1
         }]
         // CHECK IF CART IS EMPTY
-        if(this.props.cart.length > 0) {
+        if (this.props.cart.length > 0) {
             let _id = this.props._id;
             let item = this.props.cart.filter((item) => item._id === _id)
             console.log(item)
-            if(!item.length) {
+            if (!item.length) {
                 this.props.addToCart(book)
             } else {
                 // UPDATE THE QUANTITY
+                this.props.updateCart(_id, 1);
             }
         } else {
             // CART IS EMPTY
             this.props.addToCart(book)
         }
 
-    }   
+    }
     render() {
-        return(
+        return (
             <Well>
                 <Row>
                     <Col xs={12}>
                         <h6>{this.props.title}</h6>
                         <p>{this.props.description}</p>
                         <h6>usd. {this.props.price}</h6>
-                        <Button 
+                        <Button
                             onClick={this.handleCart.bind(this)}
                             bsStyle='primary'
-                            >Buy Now</Button>
+                        >Buy Now</Button>
 
                     </Col>
                 </Row>
@@ -58,7 +59,8 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        addToCart
+        addToCart,
+        updateCart
     }, dispatch)
 }
 
