@@ -9,13 +9,28 @@ import { addToCart } from '../../actions/cartActions';
 class BookItem extends React.Component{
     handleCart() {
         const book = [...this.props.cart, {
-            id: this.props.id,
+            _id: this.props._id,
             title: this.props.title,
             description: this.props.description,
-            price: this.props.price
+            price: this.props.price,
+            quantity: 1
         }]
-        this.props.addToCart(book);
-    }
+        // CHECK IF CART IS EMPTY
+        if(this.props.cart.length > 0) {
+            let _id = this.props._id;
+            let item = this.props.cart.filter((item) => item._id === _id)
+            console.log(item)
+            if(!item.length) {
+                this.props.addToCart(book)
+            } else {
+                // UPDATE THE QUANTITY
+            }
+        } else {
+            // CART IS EMPTY
+            this.props.addToCart(book)
+        }
+
+    }   
     render() {
         return(
             <Well>

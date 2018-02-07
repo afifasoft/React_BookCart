@@ -809,7 +809,7 @@ var store = (0, _redux.createStore)(_index2.default, window.__REDUX_DEVTOOLS_EXT
 
 // });
 // store.dispatch(deleteBook({ id: 2 }));
-// store.dispatch(deleteBook({ id: 3 }));
+// store.dispatch(deleteBook({ _id: 2 }));
 
 // store.dispatch(editBook(
 //     {
@@ -1447,12 +1447,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var booksReducers = exports.booksReducers = function booksReducers() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
         books: [{
-            id: 1,
+            _id: 1,
             title: 'this is the book title',
             description: 'this is the description',
             price: 33.33
         }, {
-            id: 2,
+            _id: 2,
             title: 'This is second book',
             description: 'Second description',
             price: 25.00
@@ -1475,8 +1475,8 @@ var booksReducers = exports.booksReducers = function booksReducers() {
             };case "DELETE_BOOK":
             //  console.log(action.payload)
             return { books: state.books.filter(function (_ref) {
-                    var id = _ref.id;
-                    return id !== action.payload.id;
+                    var _id = _ref._id;
+                    return _id !== action.payload._id;
                 }) };
 
         // create a copy of current array of books
@@ -1491,7 +1491,7 @@ var booksReducers = exports.booksReducers = function booksReducers() {
         //     break;
         case "EDIT_BOOK":
             return { books: state.books.map(function (book) {
-                    if (book.id === action.payload.id) {
+                    if (book._id === action.payload._id) {
                         return _extends({}, book, action.payload.updates);
                     } else {
                         return book;
@@ -1522,6 +1522,8 @@ var cartReducers = exports.cartReducers = function cartReducers() {
     switch (action.type) {
         case "ADD_TO_CART":
             return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
+        case "DELETE_CART_ITEM":
+            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
     }
     return state;
 };
@@ -1542,6 +1544,21 @@ var addToCart = exports.addToCart = function addToCart(book) {
     return {
         type: 'ADD_TO_CART',
         payload: book
+    };
+};
+
+var deleteCartItem = exports.deleteCartItem = function deleteCartItem(cart) {
+    return {
+        type: 'DELETE_CART_ITEM',
+        payload: cart
+    };
+};
+
+var updateCart = exports.updateCart = function updateCart(_id, cart) {
+    return {
+        type: 'UPDATE_CART',
+        _id: _id,
+        unit: unit
     };
 };
 
@@ -19635,9 +19652,9 @@ var BooksList = function (_React$Component) {
             var booksList = this.props.books.map(function (booksArr) {
                 return _react2.default.createElement(
                     _reactBootstrap.Col,
-                    { xs: 12, sm: 6, md: 4, key: booksArr.id },
+                    { xs: 12, sm: 6, md: 4, key: booksArr._id },
                     _react2.default.createElement(_BookItem2.default, {
-                        id: booksArr.id,
+                        _id: booksArr._id,
                         title: booksArr.title,
                         description: booksArr.description,
                         price: booksArr.price
@@ -41187,12 +41204,28 @@ var BookItem = function (_React$Component) {
         key: 'handleCart',
         value: function handleCart() {
             var book = [].concat(_toConsumableArray(this.props.cart), [{
-                id: this.props.id,
+                _id: this.props._id,
                 title: this.props.title,
                 description: this.props.description,
-                price: this.props.price
+                price: this.props.price,
+                quantity: 1
             }]);
-            this.props.addToCart(book);
+            // CHECK IF CART IS EMPTY
+            if (this.props.cart.length > 0) {
+                var _id = this.props._id;
+                var item = this.props.cart.filter(function (item) {
+                    return item._id === _id;
+                });
+                console.log(item);
+                if (!item.length) {
+                    this.props.addToCart(book);
+                } else {
+                    // UPDATE THE QUANTITY
+                }
+            } else {
+                // CART IS EMPTY
+                this.props.addToCart(book);
+            }
         }
     }, {
         key: 'render',
@@ -41394,6 +41427,10 @@ var _reactRedux = __webpack_require__(61);
 
 var _reactBootstrap = __webpack_require__(195);
 
+var _redux = __webpack_require__(1);
+
+var _cartActions = __webpack_require__(27);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41412,6 +41449,27 @@ var Cart = function (_React$Component) {
     }
 
     _createClass(Cart, [{
+        key: 'onDelete',
+        value: function onDelete(_id) {
+            console.log(this.props.cart);
+            var cartAfterDelete = this.props.cart.filter(function (item) {
+                return item._id !== _id;
+            });
+            // console.log(cartAfterDelete);
+
+
+            // const currentBookToDelete = this.props.cart;
+            // const indexToDelete = currentBookToDelete.findIndex(
+            //     (cart) => {
+            //         return cart._id === _id
+            //     }
+            // )
+            // let cartAfterDelete = [...currentBookToDelete.slice(0, indexToDelete), 
+            // ...currentBookToDelete.slice(indexToDelete + 1)]
+
+            this.props.deleteCartItem(cartAfterDelete);
+        }
+    }, {
         key: 'render',
         value: function render() {
             if (this.props.cart[0]) {
@@ -41428,12 +41486,14 @@ var Cart = function (_React$Component) {
     }, {
         key: 'renderCart',
         value: function renderCart() {
+            var _this2 = this;
+
             var cartItemsList = this.props.cart.map(function (cartArr) {
                 return _react2.default.createElement(
                     _reactBootstrap.Panel,
                     {
                         style: { padding: '1em' },
-                        key: cartArr.id },
+                        key: cartArr._id },
                     _react2.default.createElement(
                         _reactBootstrap.Row,
                         null,
@@ -41444,11 +41504,68 @@ var Cart = function (_React$Component) {
                                 'h6',
                                 null,
                                 cartArr.title
+                            ),
+                            _react2.default.createElement(
+                                'span',
+                                null,
+                                '    '
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 12, sm: 2 },
+                            _react2.default.createElement(
+                                'h6',
+                                null,
+                                'usd. ',
+                                cartArr.price
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 12, sm: 2 },
+                            _react2.default.createElement(
+                                'h6',
+                                null,
+                                'qty. ',
+                                _react2.default.createElement(
+                                    _reactBootstrap.Label,
+                                    { bsStyle: 'success' },
+                                    cartArr.quantity
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 6, sm: 4 },
+                            _react2.default.createElement(
+                                _reactBootstrap.ButtonGroup,
+                                { style: { minWidth: '300px' } },
+                                _react2.default.createElement(
+                                    _reactBootstrap.Button,
+                                    { bsStyle: 'default', bsSize: 'small' },
+                                    '-'
+                                ),
+                                _react2.default.createElement(
+                                    _reactBootstrap.Button,
+                                    { bsStyle: 'default', bsSize: 'small' },
+                                    '+'
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    '     '
+                                ),
+                                _react2.default.createElement(
+                                    _reactBootstrap.Button,
+                                    { bsStyle: 'danger', bsSize: 'small', onClick: _this2.onDelete.bind(_this2, cartArr._id) },
+                                    'DELETE'
+                                )
                             )
                         )
                     )
                 );
-            });
+            }, this);
             return _react2.default.createElement(
                 _reactBootstrap.Panel,
                 {
@@ -41476,7 +41593,14 @@ var mapStateToProps = function mapStateToProps(state) {
         cart: state.cart.cart
     };
 };
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(Cart);
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return (0, _redux.bindActionCreators)({
+        deleteCartItem: _cartActions.deleteCartItem
+    }, dispatch);
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Cart);
 
 /***/ })
 /******/ ]);

@@ -58,7 +58,7 @@ render (
 
 // });
 // store.dispatch(deleteBook({ id: 2 }));
-// store.dispatch(deleteBook({ id: 3 }));
+// store.dispatch(deleteBook({ _id: 2 }));
 
 // store.dispatch(editBook(
 //     {

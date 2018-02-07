@@ -3,13 +3,13 @@
 export const booksReducers = (state={
     books: 
         [{
-            id: 1,
+            _id: 1,
             title: 'this is the book title',
             description: 'this is the description',
             price: 33.33
         },
         {
-            id: 2,
+            _id: 2,
             title: 'This is second book',
             description: 'Second description',
             price: 25.00
@@ -29,7 +29,7 @@ export const booksReducers = (state={
     //  break;
         case "DELETE_BOOK":
     //  console.log(action.payload)
-            return {books: state.books.filter(({id}) => id !== action.payload.id)};
+            return {books: state.books.filter(({_id}) => _id !== action.payload._id)};
            
     // create a copy of current array of books
     //     const currentBookToDelete = [...state.books];
@@ -43,7 +43,7 @@ export const booksReducers = (state={
     //     break;
         case "EDIT_BOOK":
             return {books: state.books.map((book) => {
-                if (book.id === action.payload.id) {
+                if (book._id === action.payload._id) {
                     return {
                         ...book,
                         ...action.payload.updates
