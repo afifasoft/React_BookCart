@@ -5157,10 +5157,11 @@ var deleteCartItem = exports.deleteCartItem = function deleteCartItem(cart) {
     };
 };
 
-var updateCart = exports.updateCart = function updateCart(_id) {
+var updateCart = exports.updateCart = function updateCart(_id, value) {
     return {
         type: 'UPDATE_CART',
-        _id: _id
+        _id: _id,
+        value: value
     };
 };
 
@@ -41270,11 +41271,18 @@ var BooksForm = function (_React$Component) {
     return BooksForm;
 }(_react2.default.Component);
 
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-    return (0, _redux.bindActionCreators)({ postBook: _booksActions.postBook }, dispatch);
+var mapStateToProps = function mapStateToProps(state) {
+    books: state.books.books;
 };
 
-exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(BooksForm);
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return (0, _redux.bindActionCreators)({
+        postBook: _booksActions.postBook,
+        deleteBook: _booksActions.deleteBook
+    }, dispatch);
+};
+
+exports.default = (0, _reactRedux.connect)(null, mapStateToProps, mapDispatchToProps)(BooksForm);
 
 /***/ }),
 /* 340 */
@@ -41312,12 +41320,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Cart = function (_React$Component) {
     _inherits(Cart, _React$Component);
 
-    function Cart() {
-        _classCallCheck(this, Cart);
-
-        return _possibleConstructorReturn(this, (Cart.__proto__ || Object.getPrototypeOf(Cart)).apply(this, arguments));
-    }
-
     _createClass(Cart, [{
         key: 'onDelete',
         value: function onDelete(_id) {
@@ -41338,6 +41340,41 @@ var Cart = function (_React$Component) {
             // ...currentBookToDelete.slice(indexToDelete + 1)]
 
             this.props.deleteCartItem(cartAfterDelete);
+        }
+    }, {
+        key: 'onIncrement',
+        value: function onIncrement(_id) {
+            this.props.updateCart(_id, 1);
+        }
+    }, {
+        key: 'onDecrement',
+        value: function onDecrement(_id, quantity) {
+            if (quantity > 1) {
+                this.props.updateCart(_id, -1);
+            }
+        }
+    }]);
+
+    function Cart() {
+        _classCallCheck(this, Cart);
+
+        var _this = _possibleConstructorReturn(this, (Cart.__proto__ || Object.getPrototypeOf(Cart)).call(this));
+
+        _this.state = {
+            showModal: false
+        };
+        return _this;
+    }
+
+    _createClass(Cart, [{
+        key: 'open',
+        value: function open() {
+            this.setState({ showModal: true });
+        }
+    }, {
+        key: 'handleClose',
+        value: function handleClose() {
+            this.setState({ showModal: false });
         }
     }, {
         key: 'render',
@@ -41413,12 +41450,12 @@ var Cart = function (_React$Component) {
                                 { style: { minWidth: '300px' } },
                                 _react2.default.createElement(
                                     _reactBootstrap.Button,
-                                    { bsStyle: 'default', bsSize: 'small' },
+                                    { bsStyle: 'default', bsSize: 'small', onClick: _this2.onDecrement.bind(_this2, cartArr._id, cartArr.quantity) },
                                     '-'
                                 ),
                                 _react2.default.createElement(
                                     _reactBootstrap.Button,
-                                    { bsStyle: 'default', bsSize: 'small' },
+                                    { bsStyle: 'default', bsSize: 'small', onClick: _this2.onIncrement.bind(_this2, cartArr._id) },
                                     '+'
                                 ),
                                 _react2.default.createElement(
@@ -41449,7 +41486,76 @@ var Cart = function (_React$Component) {
                 _react2.default.createElement(
                     _reactBootstrap.Panel.Body,
                     null,
-                    cartItemsList
+                    cartItemsList,
+                    _react2.default.createElement(
+                        _reactBootstrap.Row,
+                        null,
+                        _react2.default.createElement(
+                            _reactBootstrap.Col,
+                            { xs: 12 },
+                            _react2.default.createElement(
+                                'h6',
+                                null,
+                                'Total amount: ',
+                                this.props.totalAmount
+                            ),
+                            _react2.default.createElement(
+                                _reactBootstrap.Button,
+                                { bsSize: 'small', bsStyle: 'success', onClick: this.open.bind(this) },
+                                'PROCEED TO CHECKOUT'
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        _reactBootstrap.Modal,
+                        { show: this.state.showModal, onHide: this.handleClose.bind(this) },
+                        _react2.default.createElement(
+                            _reactBootstrap.Modal.Header,
+                            { closeButton: true },
+                            _react2.default.createElement(
+                                _reactBootstrap.Modal.Title,
+                                null,
+                                'Thank you!'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Modal.Body,
+                            null,
+                            _react2.default.createElement(
+                                'h6',
+                                null,
+                                'Your order has been saved!'
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                null,
+                                'You will receive an email confirmation'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.Modal.Footer,
+                            null,
+                            _react2.default.createElement(
+                                _reactBootstrap.Col,
+                                { xs: 6 },
+                                _react2.default.createElement(
+                                    'h6',
+                                    null,
+                                    'total $: ',
+                                    this.props.totalAmount
+                                )
+                            ),
+                            _react2.default.createElement(
+                                _reactBootstrap.Col,
+                                { xs: 6 },
+                                _react2.default.createElement(
+                                    _reactBootstrap.Button,
+                                    { onClick: this.handleClose.bind(this) },
+                                    'Close'
+                                )
+                            )
+                        )
+                    )
                 )
             );
         }
@@ -41460,13 +41566,15 @@ var Cart = function (_React$Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        cart: state.cart.cart
+        cart: state.cart.cart,
+        totalAmount: state.cart.totalAmount
     };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return (0, _redux.bindActionCreators)({
-        deleteCartItem: _cartActions.deleteCartItem
+        deleteCartItem: _cartActions.deleteCartItem,
+        updateCart: _cartActions.updateCart
     }, dispatch);
 };
 
@@ -41598,9 +41706,17 @@ var cartReducers = exports.cartReducers = function cartReducers() {
 
     switch (action.type) {
         case "ADD_TO_CART":
-            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
+            return {
+                cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)),
+                totalAmount: totals(action.payload).amount,
+                totalQty: totals(action.payload).qty
+            };
         case "DELETE_CART_ITEM":
-            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
+            return {
+                cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)),
+                totalAmount: totals(action.payload).amount,
+                totalQty: totals(action.payload).qty
+            };
         case "UPDATE_CART":
 
             var currentBookToUpdate = [].concat(_toConsumableArray(state.cart));
@@ -41610,7 +41726,7 @@ var cartReducers = exports.cartReducers = function cartReducers() {
             });
 
             var newBookToUpdate = _extends({}, currentBookToUpdate[indexToUpdate], {
-                quantity: currentBookToUpdate[indexToUpdate].quantity + 1
+                quantity: currentBookToUpdate[indexToUpdate].quantity + action.value
             });
 
             var cartUpdate = [].concat(_toConsumableArray(currentBookToUpdate.slice(0, indexToUpdate)), [newBookToUpdate], _toConsumableArray(currentBookToUpdate.slice(indexToUpdate + 1)));
@@ -41618,7 +41734,9 @@ var cartReducers = exports.cartReducers = function cartReducers() {
             console.log(cartUpdate);
 
             return _extends({}, state, {
-                cart: cartUpdate
+                cart: cartUpdate,
+                totalAmount: totals(cartUpdate).amount,
+                totalQty: totals(cartUpdate).qty
 
                 // return {books: state.books.map((book) => {
                 //     if (book._id === action.payload._id) {
@@ -41632,6 +41750,26 @@ var cartReducers = exports.cartReducers = function cartReducers() {
                 // })}
             });}
     return state;
+};
+
+// CALCULATE TOTALS
+
+var totals = exports.totals = function totals(payloadArr) {
+    var totalAmount = payloadArr.map(function (cartArr) {
+        return cartArr.price * cartArr.quantity;
+    }).reduce(function (a, b) {
+        return a + b;
+    }, 0); // start summing from index 0
+
+    var totalQty = payloadArr.map(function (qty) {
+        return qty.quantity;
+    }).reduce(function (a, b) {
+        return a + b;
+    }, 0);
+
+    return { amount: totalAmount.toFixed(2),
+        qty: totalQty
+    };
 };
 
 /***/ })

@@ -14,9 +14,10 @@ export const deleteCartItem = (cart) => {
     }
 }
 
-export const updateCart = (_id) => {
+export const updateCart = (_id, value) => {
     return {
         type: 'UPDATE_CART',
-        _id
+        _id,
+        value
     }
 }

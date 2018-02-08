@@ -3,7 +3,7 @@ import { Well, Panel, FormControl,FormGroup, ControlLabel, Button } from 'react-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { findDOMNode } from 'react-dom';
-import { postBook } from '../../actions/booksActions';
+import { postBook, deleteBook } from '../../actions/booksActions';
 
 class BooksForm extends React.Component{
 
@@ -49,8 +49,15 @@ class BooksForm extends React.Component{
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({postBook}, dispatch)
+const mapStateToProps = (state) => {
+    books: state.books.books
 }
 
-export default connect(null, mapDispatchToProps)(BooksForm);
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        postBook,
+        deleteBook
+    }, dispatch)
+}
+
+export default connect(null, mapStateToProps, mapDispatchToProps)(BooksForm);
