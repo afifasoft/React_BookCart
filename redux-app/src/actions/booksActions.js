@@ -23,4 +23,4 @@ export const editBook = (book) => {
         type: 'EDIT_BOOK',
         payload: book
     }
-}
+} 

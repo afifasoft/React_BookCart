@@ -41211,8 +41211,24 @@ var BooksForm = function (_React$Component) {
             this.props.postBook(book);
         }
     }, {
+        key: 'onDelete',
+        value: function onDelete() {
+            var bookId = (0, _reactDom.findDOMNode)(this.refs.delete).value;
+
+            this.props.deleteBook(bookId);
+        }
+    }, {
         key: 'render',
         value: function render() {
+
+            var booksList = this.props.books.map(function (booksArr) {
+                return _react2.default.createElement(
+                    'option',
+                    { key: booksArr._id },
+                    booksArr._id
+                );
+            });
+
             return _react2.default.createElement(
                 _reactBootstrap.Well,
                 null,
@@ -41263,6 +41279,34 @@ var BooksForm = function (_React$Component) {
                         { onClick: this.handleSubmit.bind(this), bsStyle: 'primary' },
                         'Save book'
                     )
+                ),
+                _react2.default.createElement(
+                    _reactBootstrap.Panel,
+                    { style: { marginTop: '25px', padding: '1em' } },
+                    _react2.default.createElement(
+                        _reactBootstrap.FormGroup,
+                        { controlId: 'formControlsSelect' },
+                        _react2.default.createElement(
+                            _reactBootstrap.ControlLabel,
+                            null,
+                            'Select a book ID to delete it'
+                        ),
+                        _react2.default.createElement(
+                            _reactBootstrap.FormControl,
+                            { ref: 'delete', componentClass: 'select', placeholder: 'select' },
+                            _react2.default.createElement(
+                                'option',
+                                { value: 'select' },
+                                'select'
+                            ),
+                            booksList
+                        )
+                    ),
+                    _react2.default.createElement(
+                        _reactBootstrap.Button,
+                        { bsStyle: 'danger', onClick: this.onDelete.bind(this) },
+                        'Delete Book'
+                    )
                 )
             );
         }
@@ -41272,7 +41316,9 @@ var BooksForm = function (_React$Component) {
 }(_react2.default.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
-    books: state.books.books;
+    return {
+        books: state.books.books
+    };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -41282,7 +41328,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     }, dispatch);
 };
 
-exports.default = (0, _reactRedux.connect)(null, mapStateToProps, mapDispatchToProps)(BooksForm);
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BooksForm);
 
 /***/ }),
 /* 340 */
@@ -41659,7 +41705,7 @@ var booksReducers = exports.booksReducers = function booksReducers() {
             //  console.log(action.payload)
             return { books: state.books.filter(function (_ref) {
                     var _id = _ref._id;
-                    return _id !== action.payload._id;
+                    return _id != action.payload;
                 }) };
 
         // create a copy of current array of books
@@ -41673,13 +41719,15 @@ var booksReducers = exports.booksReducers = function booksReducers() {
         //     ...currentBookToDelete.slice(indexToDelete + 1)]}
         //     break;
         case "EDIT_BOOK":
-            return { books: state.books.map(function (book) {
+            return {
+                books: state.books.map(function (book) {
                     if (book._id === action.payload._id) {
                         return _extends({}, book, action.payload.updates);
                     } else {
                         return book;
                     }
-                }) };
+                })
+            };
         default:
             return state;
     }
