@@ -1,7 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import BooksList from './components/pages/BooksList'
+
+// import react-router
+
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import { applyMiddleware ,createStore } from 'redux';
 import logger from 'redux-logger'
@@ -22,17 +25,32 @@ const store = createStore(
     middleware
 );
 
+import BooksList from './components/pages/BooksList';
+import Cart from './components/pages/Cart';
+import BooksForm from './components/pages/BooksForm';
+import Main from './main';
+
 // to see the current state of the store use subscribe method
 // store.subscribe(() => {
 //     console.log(`Current state is:`, store.getState())
 // })
 
-// Render BookLis component
+const Routes = (
+    <Provider store={store}>
+        <Router history={browserHistory}>
+            <Route path="/" component={Main}>>
+                <IndexRoute component={BooksList} />
+                <Route path="/admin" component={BooksForm} />
+                <Route path="/cart" component={Cart} />
+            </Route>
+        </Router>
+    </Provider>
+)
+
+// Render components
 
 render (
-    <Provider store={store}>
-        <BooksList />
-    </Provider>, document.getElementById('app')
+    Routes, document.getElementById('app')
 )
 
 
