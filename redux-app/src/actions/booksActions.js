@@ -1,21 +1,54 @@
-export const getBooks = () => {
-    return {
-        type: 'GET_BOOKS'
+import axios from 'axios';
+
+export const getBooks = (books) => {
+    return (dispatch) => {
+        axios.get("/api/books", books)
+            .then((response) => {
+                dispatch({ type: "GET_BOOKS", payload: response.data})
+            })
+            .catch((err) => {
+                dispatch({ type: "GET_BOOKS_REJECTED", payload: "There was an error getting books!"})
+            })
     }
+
+
+    // return {
+    //     type: 'GET_BOOKS'
+    // }
 }
 
 export const postBook = (book) => {
-    return {
-        type: 'POST_BOOK',
-        payload: book
+    return (dispatch) => {
+        axios.post("/api/books", book) 
+            .then((response) => {
+                dispatch({ type: "POST_BOOK", payload: response.data })
+            })
+            .catch((err) => {
+                dispatch ({ type: "POST_BOOK_REJECTED", payload: "There was an error!" })
+            })
     }
+
+    // return {
+    //     type: 'POST_BOOK',
+    //     payload: book
+    // }
 }
 
 export const deleteBook = (id) => {
-    return {
-        type: 'DELETE_BOOK',
-        payload: id
+    return (dispatch) => {
+        axios.delete(`/api/books/${id}`)
+            .then((response) => {
+                dispatch({ type: "DELETE_BOOK", payload: id })
+            })
+            .catch((err) => {
+                dispatch ({ type: "DELETE_BOOK_REJECTED", payload: "Something went wrong!" })
+            })
     }
+
+    // return {
+    //     type: 'DELETE_BOOK',
+    //     payload: id
+    // }
 }
 
 export const editBook = (book) => {
