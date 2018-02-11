@@ -1,13 +1,20 @@
 export const cartReducers = (state = { cart: [] }, action) => {
     switch (action.type) {
+        case "GET_CART":
+            return {
+                ...state,
+                cart: action.payload,
+                totalAmount: totals(action.payload).amount,
+                totalQty: totals(action.payload).qty
+            }
         case "ADD_TO_CART":
-            return { 
-                cart: [...state, ...action.payload], 
+            return {
+                cart: [...state, ...action.payload],
                 totalAmount: totals(action.payload).amount,
                 totalQty: totals(action.payload).qty
             };
         case "DELETE_CART_ITEM":
-            return { 
+            return {
                 cart: [...state, ...action.payload],
                 totalAmount: totals(action.payload).amount,
                 totalQty: totals(action.payload).qty
@@ -52,8 +59,9 @@ export const totals = (payloadArr) => {
         return a + b;
     }, 0)
 
-    return {amount: totalAmount.toFixed(2),
-            qty: totalQty    
+    return {
+        amount: totalAmount.toFixed(2),
+        qty: totalQty
     }
 }
 

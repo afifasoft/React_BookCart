@@ -4,10 +4,10 @@ export const getBooks = (books) => {
     return (dispatch) => {
         axios.get("/api/books", books)
             .then((response) => {
-                dispatch({ type: "GET_BOOKS", payload: response.data})
+                dispatch({ type: "GET_BOOKS", payload: response.data })
             })
             .catch((err) => {
-                dispatch({ type: "GET_BOOKS_REJECTED", payload: "There was an error getting books!"})
+                dispatch({ type: "GET_BOOKS_REJECTED", payload: "There was an error getting books!" })
             })
     }
 
@@ -19,12 +19,12 @@ export const getBooks = (books) => {
 
 export const postBook = (book) => {
     return (dispatch) => {
-        axios.post("/api/books", book) 
+        axios.post("/api/books", book)
             .then((response) => {
                 dispatch({ type: "POST_BOOK", payload: response.data })
             })
             .catch((err) => {
-                dispatch ({ type: "POST_BOOK_REJECTED", payload: "There was an error!" })
+                dispatch({ type: "POST_BOOK_REJECTED", payload: "There was an error!" })
             })
     }
 
@@ -41,7 +41,7 @@ export const deleteBook = (id) => {
                 dispatch({ type: "DELETE_BOOK", payload: id })
             })
             .catch((err) => {
-                dispatch ({ type: "DELETE_BOOK_REJECTED", payload: "Something went wrong!" })
+                dispatch({ type: "DELETE_BOOK_REJECTED", payload: "Something went wrong!" })
             })
     }
 
@@ -55,5 +55,11 @@ export const editBook = (book) => {
     return {
         type: 'EDIT_BOOK',
         payload: book
+    }
+}
+
+export const resetButton = () => {
+    return {
+        type: 'RESET_BUTTON'
     }
 } 

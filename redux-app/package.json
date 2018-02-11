@@ -25,6 +25,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "fs": "0.0.1-security",
     "http-proxy": "^1.16.2",
     "jade": "~1.11.0",
     "mongoose": "^5.0.4",

@@ -8,45 +8,43 @@ import BookItem from './BookItem';
 import BooksForm from './BooksForm';
 import Cart from './Cart';
 
-class BooksList extends React.Component{
+class BooksList extends React.Component {
     componentDidMount() {
         this.props.getBooks()
     }
     render() {
         const booksList = this.props.books.map((booksArr) => {
-            return(
+            return (
                 <Col xs={12} sm={6} md={4} key={booksArr._id}>
                     <BookItem
                         _id={booksArr._id}
                         title={booksArr.title}
                         description={booksArr.description}
+                        images={booksArr.images}
                         price={booksArr.price}
                     />
                 </Col>
             )
         })
-        return(
+        return (
             <Grid>
                 <Row>
                     <Cart />
                 </Row>
                 <Row>
-                    <Col xs={12} sm={6}>
-                        <BooksForm />
-                    </Col>
                     {booksList}
                 </Row>
             </Grid>
-            
+
         )
     }
 }
-const mapStateToProps = (state)  => {
+const mapStateToProps = (state) => {
     return {
         books: state.books.books
     }
 }
-const mapDispatchToProps  = (dispatch) => {
-    return bindActionCreators({getBooks}, dispatch)
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({ getBooks }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(BooksList)

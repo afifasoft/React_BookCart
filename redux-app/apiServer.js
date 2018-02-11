@@ -42,7 +42,7 @@ app.post('/cart', (req, res) => {
   const cart = req.body;
   req.session.cart = cart;
   req.session.save((err) => {
-    if(err) {
+    if (err) {
       throw err;
     }
     res.json(req.session.cart);
@@ -50,7 +50,7 @@ app.post('/cart', (req, res) => {
 });
 // GET SESSION
 app.get('/cart', (req, res) => {
-  if(typeof req.session.cart !== 'undefined') {
+  if (typeof req.session.cart !== 'undefined') {
     res.json(req.session.cart);
   }
 })
@@ -64,7 +64,7 @@ app.post('/books', (req, res) => {
   const book = req.body;
 
   Books.create(book, (err, books) => {
-    if(err) {
+    if (err) {
       throw err;
     }
     res.json(books);
@@ -75,7 +75,7 @@ app.post('/books', (req, res) => {
 
 app.get('/books', (req, res) => {
   Books.find((err, books) => {
-    if(err) {
+    if (err) {
       throw err;
     }
     res.json(books);
@@ -88,9 +88,9 @@ app.delete('/books/:id', (req, res) => {
   const query = { _id: req.params.id };
 
   Books.remove(query, (err, books) => {
-    if(err) {
+    if (err) {
       throw err;
-  }
+    }
     res.json(books);
   })
 })
@@ -113,18 +113,38 @@ app.put('/books/:id', (req, res) => {
   options = { new: true };
 
   Books.findOneAndUpdate(query, update, options, (err, books) => {
-    if(err) {
+    if (err) {
       throw err;
     }
     res.json(books);
   })
 })
 
+// --------------- GET BOOKS IMAGES API ------------
+
+app.get('/images', (req, res) => {
+  const imgFolder = __dirname + '/public/images/';
+
+  // REQUIRE FS
+  const fs = require('fs');
+  // READ ALL FILES IN DIRECTORY
+  fs.readdir(imgFolder, (err, files) => {
+    if (err) {
+      return console.error(err);
+    }
+    const filesArr = [];
+    files.forEach((file) => {
+      filesArr.push({ name: file });
+    });
+    res.json(filesArr);
+  })
+})
+
 // -------------- END API's ---------------- 
 
 app.listen(3001, (err) => {
-    if (err) {
-        return console.log(err);
-    }
-    console.log('API Server is running on port 3001');
+  if (err) {
+    return console.log(err);
+  }
+  console.log('API Server is running on port 3001');
 })
